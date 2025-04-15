@@ -7,7 +7,7 @@
 
 ROOT_PATH="$1"
 if [ -z "$1" ]; then
-    ROOT_PATH="/drone/src"
+    ROOT_PATH="/woodpecker/src/github.com/opencloud-eu/opencloud"
 fi
 BINGO_DIR="$ROOT_PATH/.bingo"
 
