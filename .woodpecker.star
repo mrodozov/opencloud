@@ -48,9 +48,7 @@ dirs = {
     "zip": "/woodpecker/src/github.com/opencloud-eu/opencloud/zip",
     "webZip": "/woodpecker/src/github.com/opencloud-eu/opencloud/zip/web.tar.gz",
     "webPnpmZip": "/woodpecker/src/github.com/opencloud-eu/opencloud/zip/web-pnpm.tar.gz",
-    "baseGo": "/go/src/github.com/opencloud-eu/opencloud",
     "gobinTar": "go-bin.tar.gz",
-    "gobinTarPath": "/go/src/github.com/opencloud-eu/opencloud/go-bin.tar.gz",
     "opencloudConfig": "tests/config/woodpecker/opencloud-config.json",
     "opencloudRevaDataRoot": "/woodpecker/src/github.com/opencloud-eu/opencloud/srv/app/tmp/ocis/owncloud/data",
     "multiServiceOcBaseDataPath": "/woodpecker/src/github.com/opencloud-eu/opencloud/multiServiceData",
@@ -350,14 +348,6 @@ config = {
 
 GRAPH_AVAILABLE_ROLES = "b1e2218d-eef8-4d4c-b82d-0f1a1b48f3b5,a8d5fe5e-96e3-418d-825b-534dbdf22b99,fb6c3e19-e378-47e5-b277-9732f9de6e21,58c63c02-1d89-4572-916a-870abc5a1b7d,2d00ce52-1fc2-4dbc-8b95-a73b73395f5a,1c996275-f1c9-4e71-abdf-a42f6495e960,312c0871-5ef7-4b3a-85b6-0e4074c64049,aa97fe03-7980-45ac-9e50-b325749fd7e6,63e64e19-8d43-42ec-a738-2b6af2610efa"
 
-# workspace for pipeline to cache Go dependencies between steps of a pipeline
-# to be used in combination with stepVolumeGo
-workspace = \
-    {
-        "base": "/go",
-        "path": "src/github.com/opencloud-eu/opencloud/",
-    }
-
 # minio mc environment variables
 MINIO_MC_ENV = {
     "CACHE_BUCKET": {
@@ -560,7 +550,6 @@ def getGoBinForTesting(ctx):
                 },
             },
         ],
-        "workspace": workspace,
     }]
 
 def checkGoBinCache():
@@ -569,7 +558,7 @@ def checkGoBinCache():
         "image": MINIO_MC,
         "environment": MINIO_MC_ENV,
         "commands": [
-            "bash -x %s/tests/config/woodpecker/check_go_bin_cache.sh %s %s" % (dirs["baseGo"], dirs["baseGo"], dirs["gobinTar"]),
+            "bash -x %s/tests/config/woodpecker/check_go_bin_cache.sh %s %s" % (dirs["base"], dirs["base"], dirs["gobinTar"]),
         ],
     }]
 
@@ -587,12 +576,13 @@ def cacheGoBin():
         },
         {
             "name": "archive-go-bin",
-            "image": OC_UBUNTU,
+            "image": OC_CI_GOLANG,
             "commands": [
                 ". ./.env",
                 "if $BIN_CACHE_FOUND; then exit 0; fi",
-                "tar -czvf %s /go/bin" % dirs["gobinTarPath"],
+                "tar -czvf %s/%s /go/bin " % (dirs["base"], dirs["gobinTar"]),
             ],
+            "environment": CI_HTTP_PROXY_ENV,
         },
         {
             "name": "cache-go-bin",
@@ -603,10 +593,10 @@ def cacheGoBin():
                 "if $BIN_CACHE_FOUND; then exit 0; fi",
                 # .bingo folder will change after 'bingo-get'
                 # so get the stored hash of a .bingo folder
-                "BINGO_HASH=$(cat %s/.bingo_hash)" % dirs["baseGo"],
+                "BINGO_HASH=$(cat %s/.bingo_hash)" % dirs["base"],
                 # cache using the minio client to the public bucket (long term bucket)
                 "mc alias set s3 $MC_HOST $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY",
-                "mc cp -r %s s3/$CACHE_BUCKET/opencloud/go-bin/$BINGO_HASH" % (dirs["gobinTarPath"]),
+                "mc cp -r %s/%s s3/$CACHE_BUCKET/opencloud/go-bin/$BINGO_HASH" % (dirs["base"], dirs["gobinTar"]),
             ],
         },
     ]
@@ -618,16 +608,16 @@ def restoreGoBinCache():
             "image": MINIO_MC,
             "environment": MINIO_MC_ENV,
             "commands": [
-                "BINGO_HASH=$(cat %s/.bingo/* | sha256sum | cut -d ' ' -f 1)" % dirs["baseGo"],
+                "BINGO_HASH=$(cat %s/.bingo/* | sha256sum | cut -d ' ' -f 1)" % dirs["base"],
                 "mc alias set s3 $MC_HOST $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY",
-                "mc cp -r -a s3/$CACHE_BUCKET/opencloud/go-bin/$BINGO_HASH/%s %s" % (dirs["gobinTar"], dirs["baseGo"]),
+                "mc cp -r -a s3/$CACHE_BUCKET/opencloud/go-bin/$BINGO_HASH/%s %s" % (dirs["gobinTar"], dirs["base"]),
             ],
         },
         {
             "name": "extract-go-bin-cache",
-            "image": OC_UBUNTU,
+            "image": OC_CI_GOLANG,
             "commands": [
-                "tar -xvmf %s -C /" % dirs["gobinTarPath"],
+                "tar -xvmf %s/%s -C /go/bin" % (dirs["base"], dirs["gobinTar"]),
             ],
         },
     ]
@@ -688,7 +678,6 @@ def testOpencloud(ctx):
             },
         ],
         "depends_on": getPipelineNames(getGoBinForTesting(ctx)),
-        "workspace": workspace,
     }
 
 def scanOpencloud(ctx):
@@ -715,8 +704,6 @@ def scanOpencloud(ctx):
                 },
             },
         ],
-        "depends_on": getPipelineNames(getGoBinForTesting(ctx)),
-        "workspace": workspace,
     }
 
 def buildOpencloudBinaryForTesting(ctx):
@@ -735,7 +722,6 @@ def buildOpencloudBinaryForTesting(ctx):
                 },
             },
         ],
-        "workspace": workspace,
     }]
 
 def vendorbinCodestyle(phpVersion):
@@ -1731,7 +1717,6 @@ def licenseCheck(ctx):
             event["pull_request"],
             event["tag"],
         ],
-        "workspace": workspace,
     }
 
 def readyReleaseGo():
@@ -1826,7 +1811,7 @@ def makeNodeGenerate(module):
         make = "make -C %s" % module
     return [
         {
-            "name": "generate nodejs",
+            "name": "generate-nodejs",
             "image": OC_CI_NODEJS % DEFAULT_NODEJS_VERSION,
             "environment": {
                 "CHROMEDRIVER_SKIP_DOWNLOAD": True,  # install fails on arm and chromedriver is a test only dependency
@@ -1845,7 +1830,7 @@ def makeGoGenerate(module):
         make = "make -C %s" % module
     return [
         {
-            "name": "generate go",
+            "name": "generate-go",
             "image": OC_CI_GOLANG,
             "commands": [
                 "for i in $(seq 3); do %s go-generate && break || sleep 1; done" % make,
