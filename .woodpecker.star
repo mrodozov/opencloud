@@ -617,13 +617,23 @@ def restoreGoBinCache():
             "name": "extract-go-bin-cache",
             "image": OC_CI_GOLANG,
             "commands": [
-                "tar -xvmf %s/%s -C /go/bin" % (dirs["base"], dirs["gobinTar"]),
+                "tar -xvmf %s/%s -C %s" % (dirs["base"], dirs["gobinTar"], dirs["base"]),
             ],
         },
     ]
 
 def testOpencloud(ctx):
-    steps = restoreGoBinCache() + makeGoGenerate("") + [
+    # environment = CI_HTTP_PROXY_ENV
+    # environment["GOBIN"] = "/woodpecker/src/github.com/opencloud-eu/opencloud/go/bin"
+    steps = restoreGoBinCache() + [
+        {
+            "name": "generate-go",
+            "image": OC_CI_GOLANG,
+            "commands": [
+                "for i in $(seq 3); do %s go-generate && break || sleep 1; done" % make,
+            ],
+            "environment": CI_HTTP_PROXY_ENV,
+        },
         {
             "name": "golangci-lint",
             "image": OC_CI_GOLANG,
@@ -1654,6 +1664,8 @@ def binaryRelease(ctx, arch, depends_on = []):
     }
 
 def licenseCheck(ctx):
+    environment = CI_HTTP_PROXY_ENV
+    environment["GOBIN"] = "/woodpecker/src/github.com/opencloud-eu/opencloud/go/bin"
     return {
         "name": "check-licenses",
         "steps": restoreGoBinCache() + [
@@ -1674,7 +1686,7 @@ def licenseCheck(ctx):
             {
                 "name": "go-check-licenses",
                 "image": OC_CI_GOLANG,
-                "environment": CI_HTTP_PROXY_ENV,
+                "environment": environment,
                 "commands": [
                     "make ci-go-check-licenses",
                 ],
@@ -1682,7 +1694,7 @@ def licenseCheck(ctx):
             {
                 "name": "go-save-licenses",
                 "image": OC_CI_GOLANG,
-                "environment": CI_HTTP_PROXY_ENV,
+                "environment": environment,
                 "commands": [
                     "make ci-go-save-licenses",
                 ],
