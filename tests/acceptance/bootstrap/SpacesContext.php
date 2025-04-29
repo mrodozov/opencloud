@@ -1088,6 +1088,74 @@ class SpacesContext implements Context {
 	}
 
 	/**
+	 * @return void
+	 * @throws Exception
+	 */
+	public function jsonRespondedShouldContainOnlyOneSpace(): void {
+		$response = $response ?? $this->featureContext->getResponse();
+		$decodedResponse = $this->featureContext->getJsonDecodedResponse($response);
+		$userAdmin = $this->featureContext->getAdminUsername();
+
+		$aliases = [];
+		foreach ($decodedResponse['value'] as $space) {
+			$alias = $space['driveAlias'];
+			if (isset($aliases[$alias])) {
+				GraphHelper::disableSpace(
+					$this->featureContext->getBaseUrl(),
+					$userAdmin,
+					$this->featureContext->getPasswordForUser($userAdmin),
+					$space["id"],
+					$this->featureContext->getStepLineRef()
+				);
+				GraphHelper::deleteSpace(
+					$this->featureContext->getBaseUrl(),
+					$userAdmin,
+					$this->featureContext->getPasswordForUser($userAdmin),
+					$space["id"],
+					$this->featureContext->getStepLineRef()
+				);
+				Assert::fail(
+					"Duplicate space found: '$alias'\nResponse:\n" . json_encode($decodedResponse, JSON_PRETTY_PRINT)
+				);
+			}
+			$aliases[$alias] = true;
+		}
+
+	}
+
+	/**
+	 * @return void
+	 * @throws Exception
+	 */
+	public function jsonRespondedShouldNotContainSpaceWithoutName(): void {
+		$response = $response ?? $this->featureContext->getResponse();
+		$decodedResponse = $this->featureContext->getJsonDecodedResponse($response);
+		$userAdmin = $this->featureContext->getAdminUsername();
+
+		foreach ($decodedResponse['value'] as $space) {
+			if ($space['name'] === "") {
+				GraphHelper::disableSpace(
+					$this->featureContext->getBaseUrl(),
+					$userAdmin,
+					$this->featureContext->getPasswordForUser($userAdmin),
+					$space["id"],
+					$this->featureContext->getStepLineRef()
+				);
+				GraphHelper::deleteSpace(
+					$this->featureContext->getBaseUrl(),
+					$userAdmin,
+					$this->featureContext->getPasswordForUser($userAdmin),
+					$space["id"],
+					$this->featureContext->getStepLineRef()
+				);
+				Assert::fail(
+					"Space without name found. \nResponse:\n" . json_encode($decodedResponse, JSON_PRETTY_PRINT)
+				);
+			}
+		}
+	}
+
+	/**
 	 * @Then /^the user "([^"]*)" should (not |)have a space called "([^"]*)"$/
 	 *
 	 * @param string $user

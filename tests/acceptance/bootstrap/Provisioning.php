@@ -1985,8 +1985,29 @@ trait Provisioning {
 		if ($this->isTestingWithLdap()) {
 			$this->deleteLdapUsersAndGroups();
 		}
+
+		$assertionFailed = false;
+		$errorMessage = '';
+
+		// check that created users have only one personal space
+		try {
+			$this->setResponse(
+				$this->spacesContext->listAllAvailableSpaces("admin", "%24filter=driveType+eq+personal")
+			);
+			$this->spacesContext->jsonRespondedShouldContainOnlyOneSpace();
+			$this->spacesContext->jsonRespondedShouldNotContainSpaceWithoutName();
+		} catch (\Throwable $e) {
+			$assertionFailed = true;
+			$errorMessage = $e->getMessage();
+			echo "\n[WARNING] Space assertion failed: " . $errorMessage . "\n";
+		}
+
 		$this->cleanupDatabaseUsers();
 		$this->cleanupDatabaseGroups();
+
+		if ($assertionFailed) {
+			throw new \Exception("Space assertion failed:\n" . $errorMessage);
+		}
 	}
 
 	/**
