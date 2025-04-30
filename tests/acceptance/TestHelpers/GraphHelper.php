@@ -1069,7 +1069,7 @@ class GraphHelper {
 		array  $body = [],
 		array  $headers = []
 	): ResponseInterface {
-		$url = self::getFullUrl($baseUrl, 'drives/' . $urlArguments);
+		$url = self::getBetaFullUrl($baseUrl, 'drives/' . $urlArguments);
 
 		return HttpRequestHelper::get($url, $xRequestId, $user, $password, $headers, $body);
 	}
