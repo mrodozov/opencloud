@@ -108,7 +108,7 @@ func DefaultConfig() *config.Config {
 		OCS: config.OCS{
 			Prefix:                      "ocs",
 			SharePrefix:                 "/Shares",
-			HomeNamespace:               "/users/{{.Id.OpaqueId}}",
+			HomeNamespace:               "/users/`{{.Id.OpaqueId}}`",
 			AdditionalInfoAttribute:     "{{.Mail}}",
 			StatCacheType:               "memory",
 			StatCacheNodes:              []string{"127.0.0.1:9233"},
