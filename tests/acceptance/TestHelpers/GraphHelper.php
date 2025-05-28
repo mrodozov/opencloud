@@ -2468,4 +2468,109 @@ class GraphHelper {
 			self::getRequestHeaders()
 		);
 	}
+
+	/**
+	 * @param string $baseUrl
+	 * @param string $xRequestId
+	 * @param string $user
+	 * @param string $password
+	 * @param string $source
+	 *
+	 * @return ResponseInterface
+	 * @throws GuzzleException
+	 */
+	public static function addUserPhoto(
+		string $baseUrl,
+		string $xRequestId,
+		string $user,
+		string $password,
+		string $source
+	): ResponseInterface {
+		$url = self::getFullUrl($baseUrl, "me/photo/\$value");
+		return HttpRequestHelper::put(
+			$url,
+			$xRequestId,
+			$user,
+			$password,
+			['Content-Type' => 'image/jpeg'],
+			$source
+		);
+	}
+
+	/**
+	 * @param string $baseUrl
+	 * @param string $xRequestId
+	 * @param string $user
+	 * @param string $password
+	 *
+	 * @return ResponseInterface
+	 * @throws GuzzleException
+	 */
+	public static function getUserPhoto(
+		string $baseUrl,
+		string $xRequestId,
+		string $user,
+		string $password
+	): ResponseInterface {
+		$url = self::getFullUrl($baseUrl, "me/photo/\$value");
+		return HttpRequestHelper::get(
+			$url,
+			$xRequestId,
+			$user,
+			$password
+		);
+	}
+
+	/**
+	 * @param string $baseUrl
+	 * @param string $xRequestId
+	 * @param string $user
+	 * @param string $password
+	 * @param string $source
+	 *
+	 * @return ResponseInterface
+	 * @throws GuzzleException
+	 */
+	public static function changeUserPhoto(
+		string $baseUrl,
+		string $xRequestId,
+		string $user,
+		string $password,
+		string $source
+	): ResponseInterface {
+		$url = self::getFullUrl($baseUrl, "me/photo/\$value");
+		return HttpRequestHelper::sendRequest(
+			$url,
+			$xRequestId,
+			"PATCH",
+			$user,
+			$password,
+			['Content-Type' => 'image/jpeg'],
+			$source
+		);
+	}
+
+	/**
+	 * @param string $baseUrl
+	 * @param string $xRequestId
+	 * @param string $user
+	 * @param string $password
+	 *
+	 * @return ResponseInterface
+	 * @throws GuzzleException
+	 */
+	public static function deleteUserPhoto(
+		string $baseUrl,
+		string $xRequestId,
+		string $user,
+		string $password
+	): ResponseInterface {
+		$url = self::getFullUrl($baseUrl, "me/photo/\$value");
+		return HttpRequestHelper::delete(
+			$url,
+			$xRequestId,
+			$user,
+			$password
+		);
+	}
 }

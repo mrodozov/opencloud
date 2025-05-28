@@ -481,3 +481,13 @@ Feature: antivirus
       | Virus found in text.txt. Upload not possible. Virus: Eicar-Signature |
     And for user "Brian" the content of the file "/text.txt" of the space "new-space" should be "hello world"
     And for user "Alice" the content of the file "/text.txt" of the space "new-space" should be "hello world"
+
+
+  Scenario Outline: try adding a photo of the user containing the virus
+    When user "Alice" sets profile photo to "filesForUpload/filesWithVirus/eicar-image.jpeg" using the Graph API
+    Then the HTTP status code should be "200"
+    And user "Alice" should get a notification with subject "Virus found" and message:
+      | message                                                                      |
+      | Virus found in eicar-image.jpeg. Upload not possible. Virus: Eicar-Signature |
+    When user "Alice" tries to get a profile photo using the Graph API
+    Then the HTTP status code should be "404"

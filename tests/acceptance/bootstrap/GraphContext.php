@@ -3178,4 +3178,145 @@ class GraphContext implements Context {
 
 		$this->featureContext->setResponse($response);
 	}
+
+	/**
+	 * @When /^user "([^"]*)" sets profile photo to "([^"]*)" using the Graph API$/
+	 *
+	 * @param string $user
+	 * @param string $photo
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function userSetsUserProfilePhotoUsingTheGraphApi(
+		string $user,
+		string $photo
+	): void {
+		$source = \file_get_contents(
+			$this->featureContext->acceptanceTestsDirLocation() . $photo
+		);
+		$response = GraphHelper::addUserPhoto(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getStepLineRef(),
+			$user,
+			$this->featureContext->getPasswordForUser($user),
+			$source
+		);
+		$this->featureContext->setResponse($response);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" has set the profile photo to "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $photo
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 * @throws Exception
+	 */
+	public function theUserHasSetPhoto(string $user, string $photo): void {
+		$response = $this->userSetsUserProfilePhotoUsingTheGraphApi($user, $photo);
+		$this->featureContext->theHTTPStatusCodeShouldBe(200, '', $response);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" (gets|tries to get) a profile photo using the Graph API$/
+	 *
+	 * @param string $user
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function userShouldHasAProfilePhotoUsingTheGraphApi(string $user): void {
+		$response = GraphHelper::getUserPhoto(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getStepLineRef(),
+			$user,
+			$this->featureContext->getPasswordForUser($user)
+		);
+		$this->featureContext->setResponse($response);
+	}
+
+	/**
+	 * @Then /^the profile photo should contain file "([^"]*)"$/
+	 *
+	 * @param string $file
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function profilePhotoShouldContainFile(string $file): void {
+		$source = \file_get_contents(
+			$this->featureContext->acceptanceTestsDirLocation() . $file
+		);
+		Assert::assertEquals(
+			$source,
+			$this->featureContext->getResponse()->getBody()->getContents(),
+			"The profile photo binary does not match expected content of $file"
+		);
+	}
+
+	/**
+	 * @Then /^for user "([^"]*)" the profile photo should contain file "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $file
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function profilePhotoForUserShouldContainFile(string $user, string $file): void {
+		$this->featureContext->theHTTPStatusCodeShouldBe(
+			200,
+			"Expected response status code should be 200",
+			$this->userShouldHasAProfilePhotoUsingTheGraphApi($user)
+		);
+		$this->profilePhotoShouldContainFile($file);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" changes the profile photo to "([^"]*)" using the Graph API$/
+	 *
+	 * @param string $user
+	 * @param string $photo
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function userChangesUserProfilePhotoUsingTheGraphApi(
+		string $user,
+		string $photo
+	): void {
+		$source = \file_get_contents(
+			$this->featureContext->acceptanceTestsDirLocation() . $photo
+		);
+		$response = GraphHelper::changeUserPhoto(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getStepLineRef(),
+			$user,
+			$this->featureContext->getPasswordForUser($user),
+			$source
+		);
+		$this->featureContext->setResponse($response);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" deletes the profile photo using the Graph API$/
+	 *
+	 * @param string $user
+	 *
+	 * @return void
+	 * @throws GuzzleException
+	 */
+	public function userDeletesAProfilePhotoUsingTheGraphApi(string $user): void {
+		$response = GraphHelper::deleteUserPhoto(
+			$this->featureContext->getBaseUrl(),
+			$this->featureContext->getStepLineRef(),
+			$user,
+			$this->featureContext->getPasswordForUser($user)
+		);
+		$this->featureContext->setResponse($response);
+	}
+
 }
