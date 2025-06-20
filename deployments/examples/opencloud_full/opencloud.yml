@@ -58,6 +58,8 @@ services:
       COMPANION_DOMAIN: ${COMPANION_DOMAIN:-companion.opencloud.test}
       # enable to allow using the banned passwords list
       OC_PASSWORD_POLICY_BANNED_PASSWORDS_LIST: banned-password-list.txt
+      # setthis to "true" if you want to use collaborative posix user-storage
+      STORAGE_USERS_POSIX_WATCH_FS: "false"
     volumes:
       - ./config/opencloud/app-registry.yaml:/etc/opencloud/app-registry.yaml
       - ./config/opencloud/csp.yaml:/etc/opencloud/csp.yaml
