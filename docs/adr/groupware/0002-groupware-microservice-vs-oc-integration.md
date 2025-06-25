@@ -5,11 +5,9 @@ author: Pascal Bleser <p.bleser@opencloud.eu>
 decision-makers:
 consulted:
 informed:
-title: "Standalone Microservice vs OpenCloud Integration"
+title: "Implementing Groupware as a separate Microservice vs integrated in the OpenCloud Stack"
 template: https://raw.githubusercontent.com/adr/madr/refs/tags/4.0.0/template/adr-template.md
 ---
-
-# Implementing Groupware as a separate Microservice vs integrated in the OpenCloud Stack
 
 * Status: draft
 
@@ -60,4 +58,3 @@ TODO
 * good: the ability to include the Groupware backend in the single binary deployment
 * neutral: be in the same code repository and part of the same delivery as other services in OpenCloud
 * neutral: must be implemented in Go on top of the same technology stack
-

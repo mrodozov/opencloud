@@ -9,8 +9,6 @@ title: "Resource Linking"
 template: https://raw.githubusercontent.com/adr/madr/refs/tags/4.0.0/template/adr-template.md
 ---
 
-# Resource Linking
-
 * Status: draft
 
 ## Context
