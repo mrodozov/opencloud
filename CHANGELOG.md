@@ -10,6 +10,10 @@
 
 - Fix lico idp doesn't load opencloud font anymore [[#1153](https://github.com/opencloud-eu/opencloud/pull/1153)]
 
+### 📦️ Dependencies
+
+- build(deps): bump github.com/oklog/run from 1.1.0 to 1.2.0 [[#1150](https://github.com/opencloud-eu/opencloud/pull/1150)]
+
 ## [3.1.0](https://github.com/opencloud-eu/opencloud/releases/tag/v3.1.0) - 2025-06-30
 
 ### ❤️ Thanks to all contributors! ❤️
