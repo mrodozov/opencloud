@@ -67,7 +67,7 @@ require (
 	github.com/opencloud-eu/reva/v2 v2.34.0
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/pkg/errors v0.9.1
-	github.com/pkg/xattr v0.4.11
+	github.com/pkg/xattr v0.4.12
 	github.com/prometheus/client_golang v1.22.0
 	github.com/r3labs/sse/v2 v2.10.0
 	github.com/riandyrn/otelchi v0.12.1
@@ -90,7 +90,7 @@ require (
 	go-micro.dev/v4 v4.11.0
 	go.etcd.io/bbolt v1.4.2
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
 	go.opentelemetry.io/contrib/zpages v0.62.0
 	go.opentelemetry.io/otel v1.37.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.17.0
