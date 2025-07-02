@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.1.1](https://github.com/opencloud-eu/opencloud/releases/tag/v3.1.1) - 2025-07-01
+## [3.1.1](https://github.com/opencloud-eu/opencloud/releases/tag/v3.1.1) - 2025-07-02
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -12,6 +12,8 @@
 
 ### 📦️ Dependencies
 
+- build(deps): bump github.com/pkg/xattr from 0.4.11 to 0.4.12 [[#1156](https://github.com/opencloud-eu/opencloud/pull/1156)]
+- build(deps): bump go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp from 0.61.0 to 0.62.0 [[#1155](https://github.com/opencloud-eu/opencloud/pull/1155)]
 - build(deps): bump github.com/open-policy-agent/opa from 1.5.1 to 1.6.0 [[#1148](https://github.com/opencloud-eu/opencloud/pull/1148)]
 - build(deps): bump github.com/oklog/run from 1.1.0 to 1.2.0 [[#1150](https://github.com/opencloud-eu/opencloud/pull/1150)]
 
