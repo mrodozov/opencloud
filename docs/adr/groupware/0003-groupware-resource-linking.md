@@ -15,6 +15,14 @@ template: https://raw.githubusercontent.com/adr/madr/refs/tags/4.0.0/template/ad
 
 Which semantic and technical approach to take in order to provide strong integration of the various products and capabilities of OpenCloud, OpenTalk, and potentially other products as well?
 
+## Decision Drivers
+
+* a strong integration that allows users to access resources and relationships without having to switch views, which translates into a "mental switch" as well
+* an innovative approach that differs from the traditional way groupware applications have been designed in the past
+* TODO more decision drivers from PM
+* a model that is open and generic enough to integrate many different types of resources and relationships
+* a model that allows for independent and incremental upgrades to the resources and relationships that can be contributed by each service
+
 ## Considered Options
 
 * resource linking

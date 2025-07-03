@@ -23,6 +23,10 @@ The OpenCloud backend is built on a framework that
 
 This decision is about whether the Groupware backend service should be implemented within that framework or, instead, be implemented as a standalone backend service.
 
+## Decision Drivers
+
+* single binary deployment strategy is potentially important (TODO how important is it really? stakeholders:?)
+
 ## Considered Options
 
 * have the Groupware Middleware as an independent microservice
