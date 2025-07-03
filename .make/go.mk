@@ -29,6 +29,8 @@ ifeq ($(VERSION), daily)
 	STRING ?= $(shell git rev-parse --short HEAD)
 else ifeq ($(VERSION),)
 	STRING ?= $(shell git rev-parse --short HEAD)
+else
+	STRING := 
 endif
 
 
