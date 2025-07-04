@@ -1,13 +1,14 @@
 # Changelog
 
-## [3.1.1](https://github.com/opencloud-eu/opencloud/releases/tag/v3.1.1) - 2025-07-03
+## [3.1.1](https://github.com/opencloud-eu/opencloud/releases/tag/v3.1.1) - 2025-07-04
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@AlexAndBear
+@AlexAndBear, @fschade
 
 ### 🐛 Bug Fixes
 
+- fix(collaboration): re register app providers in a configurable interval [[#1035](https://github.com/opencloud-eu/opencloud/pull/1035)]
 - Fix lico idp doesn't load opencloud font anymore [[#1153](https://github.com/opencloud-eu/opencloud/pull/1153)]
 
 ### 📦️ Dependencies
