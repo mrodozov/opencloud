@@ -4,11 +4,15 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@AlexAndBear, @dragonchaser, @fschade
+@AlexAndBear, @ScharfViktor, @dragonchaser, @fschade
 
 ### ✨ Features
 
 - Add `HasTrashedItems` property to /me/drives endpoint [[#1163](https://github.com/opencloud-eu/opencloud/pull/1163)]
+
+### 📈 Enhancement
+
+- add missing full username mapper to the full example [[#1181](https://github.com/opencloud-eu/opencloud/pull/1181)]
 
 ### 🐛 Bug Fixes
 
