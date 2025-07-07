@@ -4,7 +4,7 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@AlexAndBear, @ScharfViktor, @dragonchaser, @fschade
+@AlexAndBear, @ScharfViktor, @dragonchaser, @fschade, @jnweiger
 
 ### ✨ Features
 
