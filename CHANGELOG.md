@@ -10,14 +10,15 @@
 
 - Add `HasTrashedItems` property to /me/drives endpoint [[#1163](https://github.com/opencloud-eu/opencloud/pull/1163)]
 
+### 🐛 Bug Fixes
+
+- Update Makefile [[#1187](https://github.com/opencloud-eu/opencloud/pull/1187)]
+- fix(collaboration): re register app providers in a configurable interval [[#1035](https://github.com/opencloud-eu/opencloud/pull/1035)]
+- Fix lico idp doesn't load opencloud font anymore [[#1153](https://github.com/opencloud-eu/opencloud/pull/1153)]
+
 ### 📈 Enhancement
 
 - add missing full username mapper to the full example [[#1181](https://github.com/opencloud-eu/opencloud/pull/1181)]
-
-### 🐛 Bug Fixes
-
-- fix(collaboration): re register app providers in a configurable interval [[#1035](https://github.com/opencloud-eu/opencloud/pull/1035)]
-- Fix lico idp doesn't load opencloud font anymore [[#1153](https://github.com/opencloud-eu/opencloud/pull/1153)]
 
 ### 📦️ Dependencies
 
