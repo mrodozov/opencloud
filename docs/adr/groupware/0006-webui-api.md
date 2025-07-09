@@ -23,11 +23,6 @@ We need a comprehensive HTTP API for the OpenCloud Web UI to provide access to t
 * Chat
 * Configuration
 
-Additionally, the API must also be able to provide information about related resources and their relationships, as outlined in [the Resource Linking ADR](./0003-groupware-resource-linking.md).
-
-> [!NOTE]
-> This ADR concerns the decision regarding which API approach/process/technology/specification to use, not the details of the data model and such, which will need to be fleshed out following the requirements and priorities of the OpenCloud UI Client development, regardless of the selected approach.
-
 ```mermaid
 graph LR
   subgraph clients
@@ -58,11 +53,17 @@ graph LR
   stalwart-->stalwart_storage
 ```
 
-For the OpenCloud Drive services, the communication between UI client and backend services is performed via the [LibreGraph API](https://github.com/opencloud-eu/libre-graph-api), which is based on [Microsoft Graph](https://developer.microsoft.com/en-us/graph).
+Additionally, the API must also be able to provide information about related resources and their relationships, as outlined in [the Resource Linking ADR](./0003-groupware-resource-linking.md).
+
+For the OpenCloud Drive services, the communication between UI client and backend services is performed via the [LibreGraph API](https://github.com/opencloud-eu/libre-graph-api), which is based on [Microsoft Graph](https://developer.microsoft.com/en-us/graph). The goal of this ADR is **not** to question or change that decision, and the choice of an option is merely for the communication with the Groupware backend.
 
 Communication between the OpenCloud Groupware and Stalwart will make use of the [JMAP (JSON Meta Application Protocol) protocol](https://jmap.io/spec-mail.html).
 
+The API for the OpenCloud Web UI is **not** supposed to be an abstraction of that and thus may use JMAP data formats.
+
 Other [MUAs (Mail User Agents)](https://en.wikipedia.org/wiki/Email_client) converse directly with Stalwart using [IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) or [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol), [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol), [CalDAV](https://en.wikipedia.org/wiki/CalDAV), [CardDAV](https://en.wikipedia.org/wiki/CardDAV).
+
+This ADR concerns the decision regarding which API approach/process/technology/specification to use, not the details of the data model and such, which will need to be fleshed out following the requirements and priorities of the OpenCloud UI Client development, regardless of the selected approach.
 
 ## Decision Drivers
 
