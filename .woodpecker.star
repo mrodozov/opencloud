@@ -430,6 +430,9 @@ def main(ctx):
       none
     """
 
+    if ctx.build.event == "cron" and ctx.build.cron == "l10n":
+        return l10n(ctx)
+
     build_release_helpers = \
         readyReleaseGo()
 
@@ -2142,6 +2145,26 @@ def skipIfUnchanged(ctx, type):
         skip = base
 
     return skip
+
+def l10n(ctx):
+    return [{
+        "name": "l10n",
+        "steps": [
+            {
+                "name": "hello",
+                "image": "bash",
+                "commands": [
+                    "echo world",
+                ],
+            }
+        ],
+        "when": [
+            {
+                "event": "cron",
+                "cron": "l10n",
+            }
+        ],
+    }]
 
 def example_deploys(ctx):
     on_merge_deploy = [
