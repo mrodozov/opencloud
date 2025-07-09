@@ -90,7 +90,7 @@ The latter is achieved by minimizing the number of roundtrips between the client
 
 We are assuming that the APIs are public APIs (not just technically) and may be consumed by SDKs and third parties.
 
-Implications are that care must be put into providing an API that is table, versioned, has a changelog, and potentially provided as a product with [LTS (Long-term Support)](https://en.wikipedia.org/wiki/Long-term_support) options.
+Implications are that care must be put into providing an API that is stable, versioned, has a changelog, and potentially provided as a product with [LTS (Long-term Support)](https://en.wikipedia.org/wiki/Long-term_support) options.
 
 > [!WARNING]  
 > There is still disagreement over this item, as some (e.g. <p.bleser@opencloud.eu>) question whether it is
@@ -103,9 +103,9 @@ Implications are that care must be put into providing an API that is table, vers
 
 ## Considered Options
 
-* LibreGraph
-* JMAP
-* a custom REST API (albeit potentially based on standards, at least partially)
+* [LibreGraph](#libregraph)
+* [JMAP](#jmap)
+* [custom REST API](#custom-rest-api) (albeit potentially based on standards, at least partially)
 
 ## Decision Outcome
 
@@ -124,7 +124,11 @@ TODO
 
 ## Pros and Cons of the Options
 
-### LibreGraph
+* [LibreGraph](#proscons-libregraph)
+* [JMAP](#proscons-jmap)
+* [Custom REST API](#proscons-custom)
+
+### <a id="proscons-libregraph"/>LibreGraph
 
 [LibreGraph](https://github.com/opencloud-eu/libre-graph-api) is an API specification that is heavily inspired by and based on [Microsoft Graph](https://developer.microsoft.com/en-us/graph), of which it is a partial implementation, but also with modifications where necessary.
 
@@ -145,7 +149,7 @@ GET /v1.0/me/messages?$select=sender,subject&$count=50&$orderby=received
 * there is no compatibility benefit
   * the only MUA that uses the Microsoft Graph API is Microsoft Outlook, and it is not a goal to support Microsoft Outlook as a MUA beyond standard IMAP/SMTP/CalDAV/CardDAV services (and that would be Microsoft Graph, not LibreGraph nor any customizations we would require)
   * we will not implement all of the Microsoft Graph API
-  * we will not exactly implement parts of the Microsoft Graph API either
+  * we will not implement parts of the Microsoft Graph API as-is either, but will require to make modifications
 * if there is a requirement for considering that API as a public API for third party integrators, then the API also needs to be documented, maintained, versioned, and kept stable as much as possible (this is neutral because it is a requirement that exists with every option)
 
 #### Bad
@@ -162,23 +166,37 @@ GET /v1.0/me/messages?$select=sender,subject&$count=50&$orderby=received
 * does not support multiple accounts per user
   * would require the addition of an account parameter, as a query parameter or as part of the path, which would make every URL in the API incompatible with Microsoft Graph
 * more implementation effort than JMAP
-* possibly (probably?) more implementation effort than a custom REST API
+* the JMAP RFCs already provides a data model, and we would end up converting between them all the time, with incompatibilities (Graph has attributes JMAP doesn't, and the other way around)
+* possibly (probably?) more implementation effort than a custom REST API, due to its complexity
 
 #### Decision Drivers
 
 * UI Driven
   * TODO the OpenCloud Web Team strongly prefers not to use LibreGraph
     * TODO reasons here
+  * one upside is that there is already a client stack for performing LibreGraph operations, which could be reused to some degree for the Groupware APIs as well
+    * it does not amount to all that much code though
 * Economic Awareness
-  * TODO more complexity and more effort
+  * more complexity and more effort as the other options due to the inherent complexity of the specification
+  * a data model is already specified in full, which might save us some time on that front
+    * although probably not really either since the actual data model we will work with on the backend is prescribed by JMAP, and we will only be looking to map attributes betsween JMAP and LibreGraph
+    * the data model is not necessarily thorougly documented either, which will leave room for interpretation, also due to incompatibilities between JMAP and Graph
+    * there will be attributes that are defined in JMAP and that we will receive from Stalwart that will not have a corresponding attribute in Graph (or be a list of values as opposed to a single value), and those will require to either lose some data by squashing it into the Graph data model, or extending the Graph data model which renders us incompatible with it
 * Efficiency
-  * TODO
   * since the API is not tailored to our needs, we are much more likely to end up performing multiple roundtrips for single high level operations
 * Third Party Consumption
-  * TODO
-  * TODO: LibreGraph doesn't help with API stability either since we don't implement all of it, won't be compatible, and will just as equally need to evolve it
+  * for some of the operations, we could point to the Microsoft Graph documentation, although that would not make for a great experience either, we would probably need to replicate it
+  * our deviations and extensions will have to be maintained just like the other options
+  * LibreGraph doesn't help with API stability either since
+    * we don't implement all of it, and need to document what we implement and what we don't,
+    * won't be compatible either due to modifications (additional parameters, unsupported parameters, different interpretations),
+    * and will just as equally need to evolve it as the other options, requiring the documentation of changes as well
+  * will be required to be maintained as a public API
+    * documentation
+    * LTS
+    * versioning
 
-### JMAP
+### <a id="proscons-jmap"/>JMAP
 
 [JMAP (JSON Meta Application Protocol)](https://jmap.io/spec.html) is a set of specifications that are codified in RFCs:
 
@@ -399,10 +417,18 @@ graph LR
 * Economic Awareness
 * Efficiency
 * Third Party Consumption
+  * for some of the operations, we could point to the JMAP documentation and RFCs, although that would not make for a great experience either, we would probably need to replicate it
+  * our protocol extensions will have to be maintained just like the other options
+  * will be required to be maintained as a public API
+    * documentation
+    * LTS
+    * versioning
 
-### Custom REST API
+### <a id="proscons-custom"/>Custom REST API
 
 A custom REST API would implement the resources and semantics as they are needed by the UI, and would be strongly if not fully UI-driven.
+
+The data model could, or even should, remain close or equal to JMAP's, to avoid data loss by converting back and forth.
 
 TODO more fluff here: drawbacks of maintaining an API ourselves, do we need to version it, what is the cost of maintaining it, keeping it stable to the outside, look into existing standards for data representation (e.g. JSON:API ?)
 
@@ -454,19 +480,27 @@ GET /groupware/startup/1/?mails=50
 
 * does not follow any standard (besides REST), although the purpose is solely to build an API for the OpenCloud UI, not an API that is meant to be consumed by many different clients
   * TODO have a look at [JSON:API](https://jsonapi.org/)
-  * TODO look into GraphQL
+  * TODO look into GraphQL (most probably suffers from similar issues to Graph API though: too complex, no database backend to automate the implementation)
 * if there is a requirement for considering that API as a public API for third party integrators, then the API also needs to be documented, maintained, versioned, and kept stable as much as possible (this is neutral because it is a requirement that exists with every option)
 
 #### Bad
 
 * more implementation effort than JMAP
 * requires designing the API from scratch, as opposed to using the Graph API which already prescribes one
+  * although it probably makes sense to re-use the data model of JMAP, which is prescribed in RFCs, also to avoid data loss and copying things around needlessly
 
 #### Decision Drivers
 
 * UI Driven
+  * favoured solution for the OpenCloud Web UI team (TODO add reasons)
 * Economic Awareness
   * designing a new custom API is not much effort since it is UI requirements driven
   * maintaining a new custom API or JMAP extensions is not more effort either, since the exact same thing needs to be done with LibreGraph, as it will have numerous exceptions and will require documenting those, as well as which parts of the Microsoft Graph API are implemented and which aren't
 * Efficiency
+  * the most efficient approach since it is tailored to what is actually needed for the OpenCloud UI, which will allow us to reduce the roundtrips to a minimum
 * Third Party Consumption
+  * a custom API will be required to be maintained as a public API
+    * documentation
+    * LTS
+    * versioning
+
